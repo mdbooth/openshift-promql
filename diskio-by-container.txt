@@ -1,0 +1,25 @@
+sum by (device, image, name, namespace, node, pod, type) (
+      (
+          -label_replace(
+            irate(container_fs_writes_bytes_total{device="/dev/vda",pod=~".+"}[1m]),
+            "type",
+            "written",
+            "",
+            ""
+          )
+        or
+            label_replace(
+              irate(container_fs_reads_bytes_total{device="/dev/vda",pod=~".+"}[1m]),
+              "type",
+              "read",
+              "",
+              ""
+            )
+          !=
+            0
+      )
+    and on (instance)
+      kubelet_node_name
+  and on (node)
+    kube_node_role{role="master"}
+)

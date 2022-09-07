@@ -1,0 +1,9 @@
+    sum by (instance, device, type) (
+        label_replace(irate(node_disk_read_bytes_total{device="vda"}[1m]), "type", "read", "", "")
+      or
+        -label_replace(irate(node_disk_written_bytes_total{device="vda"}[1m]), "type", "written", "", "")
+    )
+  !=
+    0
+and on (instance)
+  label_replace(kube_node_role{role="master"}, "instance", "$1", "node", "(.*)")

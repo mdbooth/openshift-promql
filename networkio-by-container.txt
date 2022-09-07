@@ -1,0 +1,24 @@
+sum by (image, interface, namespace, node, pod, type) (      (
+          -label_replace(
+            irate(container_network_transmit_bytes_total{pod=~".+",interface=~"ens.*"}[2m]),
+            "type",
+            "transmit",
+            "",
+            ""
+          )
+        or
+            label_replace(
+              irate(container_network_receive_bytes_total{pod=~".+",interface=~"ens.*"}[2m]),
+              "type",
+              "receive",
+              "",
+              ""
+            )
+          !=
+            0
+      )
+    and on (instance)
+      kubelet_node_name
+  and on (node)
+    kube_node_role{role="master"}
+)

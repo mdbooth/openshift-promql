@@ -1,0 +1,25 @@
+    (
+      sum by (device, instance, type) (
+          (
+            label_replace(
+              irate(node_network_receive_bytes_total{device=~"ens.*"}[1m]),
+              "type",
+              "receive",
+              "",
+              ""
+            )
+          )
+        or
+          label_replace(
+            -irate(node_network_transmit_bytes_total{device=~"ens.*"}[1m]),
+            "type",
+            "transmit",
+            "",
+            ""
+          )
+      )
+    )
+  !=
+    0
+and on (instance)
+  label_replace(kube_node_role{role="master"}, "instance", "$1", "node", "(.*)")

@@ -1,0 +1,7 @@
+    sum by (image, instance, name, namespace, node, pod) (
+      irate(container_cpu_usage_seconds_total{pod=~".+"}[1m]) > 0.5
+    )
+  and on (instance)
+    kubelet_node_name
+and on (node)
+  kube_node_role{role="master"}
