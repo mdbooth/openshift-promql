@@ -1,0 +1,14 @@
+  sum by (code, node, verb) (
+      label_replace(
+          sum by (code, instance, verb) (
+            irate(apiserver_request_total{apiserver="kube-apiserver",code=~"5.."}[1m])
+          )
+        / on (instance, verb) group_left ()
+          sum by (instance, verb) (irate(apiserver_request_total{apiserver="kube-apiserver",code!="0"}[1m])),
+        "host_ip", "$1", "instance", "(.*):.*"
+      )
+    * on (host_ip) group_left (node)
+      label_replace(kubelet_node_name, "host_ip", "$1", "instance", "(.*):.*")
+  )
+*
+  100

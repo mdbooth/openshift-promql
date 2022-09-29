@@ -1,0 +1,9 @@
+  avg by(node, mode) (label_replace(
+    irate(node_cpu_seconds_total{mode=~"user|system|iowait|steal"}[1m]),
+    "node",
+    "$1",
+    "instance",
+    "(.*)"
+  )
+and on (node)
+  kube_node_role{role="master"})

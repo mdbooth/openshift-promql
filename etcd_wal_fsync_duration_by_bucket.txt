@@ -1,0 +1,3 @@
+  irate(etcd_disk_wal_fsync_duration_seconds_bucket{le="0.016"}[1m])
+/ on (pod)
+  irate(etcd_disk_wal_fsync_duration_seconds_count[1m])

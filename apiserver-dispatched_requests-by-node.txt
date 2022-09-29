@@ -1,0 +1,8 @@
+sum by (node) (
+    label_replace(
+      irate(apiserver_flowcontrol_dispatched_requests_total{apiserver="kube-apiserver"}[1m]),
+      "host_ip", "$1", "instance", "(.*):.*"
+    )
+  * on (host_ip) group_left (node)
+    label_replace(kubelet_node_name, "host_ip", "$1", "instance", "(.*):.*")
+)
